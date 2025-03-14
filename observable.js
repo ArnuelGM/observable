@@ -1,13 +1,12 @@
 export class SimpleObservable {
   constructor() {
-    this.observers = new Map();
+    this.observers = new Set();
   }
   subscribe(observer) {
-    const observerId = crypto.randomUUID();
-    this.observers.set(observerId, observer);
-    return () => this.observers.delete(observerId);
+    this.observers.add(observer);
+    return () => this.observers.delete(observer);
   }
   notify(value) {
-    this.observers.forEach((observer) => observer(value));
+    this.observers.forEach(observer => observer(value));
   }
 }
