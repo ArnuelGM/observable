@@ -1,6 +1,6 @@
-export type Unsubscribe = () => void;
-export type Notifier<T> = (value?: T) => void;
 export type Observer<T> = (value?: T) => void;
+export type Notifier<T> = (value?: T) => void;
+export type Unsubscribe = () => void
 export type Subscriber<T> = (observer: Observer<T>) => Unsubscribe;
 
 export interface Observable<T> {
@@ -8,20 +8,16 @@ export interface Observable<T> {
   notify: Notifier<T>;
 }
 
-export class SimpleObservable<T> implements Observable<T> {
-  private observers: Map<string, Observer<T>>;
- 
+export class SimpleObservable<T = void> implements Observable<T> {
+  private observers: Set<Observer<T>>;
   constructor() {
-    this.observers = new Map<string, Observer<T>>();
+    this.observers = new Set();
   }
- 
-  subscribe(observer: Observer<T>): Unsubscribe {
-    const observerId = crypto.randomUUID();
-    this.observers.set(observerId, observer);
-    return () => this.observers.delete(observerId);
+  public subscribe(observer: Observer<T>): Unsubscribe {
+    this.observers.add(observer);
+    return () => this.observers.delete(observer);
   }
- 
-  notify(value?: T): void {
-    this.observers.forEach((observer) => observer(value));
+  public notify(value?: T): void {
+    this.observers.forEach(observer => observer(value));
   }
 }
